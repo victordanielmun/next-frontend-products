@@ -4,18 +4,33 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from "react-hook-form";
-import { createProduct } from "../product.api";
-import { useRouter } from "next/navigation";
+import { createProduct, updateProduct } from "../product.api";
+import { useParams, useRouter } from "next/navigation";
 
-const ProductForm = () => {
-  const { register, handleSubmit } = useForm();
+const ProductForm = ({ product }: any) => {
+  const { register, handleSubmit } = useForm({
+    defaultValues: {
+      name: product?.name,
+      description: product?.description,
+      price: product?.price,
+      image: product?.image,
+    },
+  });
   const router = useRouter();
+  const params = useParams<{ id: string }>();
 
   const onSubmit = handleSubmit(async (data) => {
-    await createProduct({
-      ...data,
-      price: parseFloat(data.price),
-    });
+    if (params.id) {
+      await updateProduct(params.id, {
+        ...data,
+        price: parseFloat(data.price),
+      });
+    } else {
+      await createProduct({
+        ...data,
+        price: parseFloat(data.price),
+      });
+    }
 
     router.push("/");
     router.refresh();
@@ -32,7 +47,9 @@ const ProductForm = () => {
       <Input {...register("price")} />
       <Label>Image</Label>
       <Input {...register("image")} />
-      <Button>New Product</Button>
+      <Button className="m-5" type="submit">
+        {params.id ? "Update" : "Create"}
+      </Button>
     </form>
   );
 };

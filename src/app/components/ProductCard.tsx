@@ -19,7 +19,10 @@ const ProductCard = ({ product }: any) => {
   };
 
   return (
-    <Card key={product.id}>
+    <Card
+      key={product.id}
+      onClick={() => router.push(`/products/${product.id}`)}
+    >
       <CardHeader>
         <CardTitle className="flex justify-between">{product.name}</CardTitle>
         <span className="text-sm font-bold text-gray-500">
@@ -31,11 +34,22 @@ const ProductCard = ({ product }: any) => {
         <p>{product.description}</p>
       </CardContent>
       <CardFooter>
-        <Button className="m-5">Comprar</Button>
+        <Button
+          className="m-5"
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(`/products/${product.id}/edit`);
+          }}
+        >
+          Editar
+        </Button>
         <Button
           className="mt5"
           variant="destructive"
-          onClick={() => handleRemove(product.id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleRemove(product.id);
+          }}
         >
           Borrar
         </Button>
